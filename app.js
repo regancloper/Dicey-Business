@@ -1,64 +1,54 @@
 // create constant for number of die sides, an array to hold the dice, and a unique id for each die
 const DIE_SIDES = 6;
-let dies = [];
-let dieId = 1;
 
 // outlines Die class, which creates Die object
 class Die {
+
+    static Corral = [];
+
+    static sumAll() {
+        let alerttxt = "The sum of the current dice is ";
+        let sumAllDice = 0;
+        if (Die.Corral.length > 0) {
+            sumAllDice = Die.Corral.reduce((tally, die) => tally += die.value, 0);
+        }
+        alert(`${alerttxt}${sumAllDice}!`);
+    }
+
     constructor() {
-        this.value;
         this.roll();
-        this.id = dieId++;
         this.addToScreen();
         this.addListeners();
+        Die.Corral.push(this);
     }
     roll() {
         this.value = Math.floor(Math.random() * (DIE_SIDES) + 1);
     }
+    reRoll() {
+        this.roll();
+        this.div.text(this.value);
+    }
     deleteDie() {
         this.div.remove();
-        dies = dies.filter(obj => obj.id !== this.id);
+        let index = Die.Corral.indexOf(this);
+        Die.Corral.splice(index, 1);
     }
     addToScreen() {
         this.div = $(`<div class="dice shadow">${this.value}</div>`);
         $('.die-container').append(this.div);
     }
     addListeners() {
-        this.div.click(() => updateDie(this));
+        this.div.click(() => this.reRoll());
         this.div.dblclick(() => this.deleteDie());
     }
 }
 
 // click listener for "New Die" button
-$('#generate').click(function() {
-    dies.push(new Die());
-});
+$('#generate').click(() => new Die());
 
 // click listener for "Reroll" button
-$('#reroll').click(function() {
-    dies.forEach((val) => updateDie(val));
-})
+$('#reroll').click(() => Die.Corral.forEach((val) => val.reRoll()));
 
 // click listener for "Sum Dice" button
-$('#sum').click(sumAll);
-
-// alerts user with sum of all dice on the screen
-function sumAll() {
-    let sum = [];
-    let alerttxt = "The sum of the current dice is ";
-    let sumAllDice = 0;
-    if (dies.length > 0) {
-        dies.forEach(val => {
-            sum.push(val.value);
-            sumAllDice = sum.reduce((acc, val) => acc + val);
-        });
-    }
-    alert(`${alerttxt}${sumAllDice}!`);
-}
-
-// updates value of die after it is clicked on
-function updateDie(obj) {
-    obj.roll();
-    obj.div.text(obj.value);
-}
+$('#sum').click(() => Die.sumAll());
 
