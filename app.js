@@ -1,5 +1,5 @@
 // create constant for number of die sides, an array to hold the dice, and a unique id for each die
-const DIE_SIDES = 6;
+const DIE_SIDES = 8;
 
 // outlines Die class, which creates Die object
 class Die {
